@@ -350,7 +350,6 @@ public class WebViewEx extends WebView {
     @Override
     public void setWebViewClient(WebViewClient client) {
         mWebViewClient = client;
-        super.setWebViewClient(client);
     }
 
     public WebViewClient getWebViewClient() {
@@ -360,7 +359,6 @@ public class WebViewEx extends WebView {
     @Override
     public void setWebChromeClient(WebChromeClient client) {
         mWebChromeClient = client;
-        super.setWebChromeClient(client);
     }
     
     public WebChromeClient getWebChromeClient() {
