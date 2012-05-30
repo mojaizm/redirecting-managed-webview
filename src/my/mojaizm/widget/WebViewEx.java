@@ -1,4 +1,4 @@
-package my.minai.widget;
+package my.mojaizm.widget;
 
 import java.util.Map;
 

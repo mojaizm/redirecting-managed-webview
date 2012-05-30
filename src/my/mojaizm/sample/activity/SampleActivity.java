@@ -1,4 +1,4 @@
-package my.minai.sample.activity;
+package my.mojaizm.sample.activity;
 
 import my.minai.sample.R;
 import my.minai.widget.WebViewEx;
