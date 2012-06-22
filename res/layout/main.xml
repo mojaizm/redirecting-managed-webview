@@ -4,7 +4,7 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <my.minai.widget.WebViewEx
+    <my.mojaizm.widget.WebViewEx
         android:id="@+id/webview"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
