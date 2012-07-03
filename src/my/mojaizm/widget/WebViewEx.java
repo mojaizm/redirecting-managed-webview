@@ -9,7 +9,6 @@ import android.net.http.SslError;
 import android.os.Build;
 import android.os.Message;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -159,6 +158,11 @@ public class WebViewEx extends WebView {
             public void onProgressChanged(WebView webview, int progress) {
                 mProgress = progress;
                 mWebChromeClient.onProgressChanged(webview, progress);
+                
+                if (mProgress >= 50 && !mIsHalfFinished) {
+                    mIsHalfFinished = true;
+                    mWebViewExClient.onPageHalfFinished(webview);
+                }
             }
 
             @Override
@@ -262,11 +266,6 @@ public class WebViewEx extends WebView {
         super.setPictureListener(new PictureListener() {
             @Override
             public void onNewPicture(WebView webview, Picture picture) {
-                if (mProgress >= 50 && !mIsHalfFinished) {
-                    mIsHalfFinished = true;
-                
-                    mWebViewExClient.onPageHalfFinished(webview);
-                }
                 mWebViewExClient.onNewPicture(webview, picture);
             }
         });
@@ -434,6 +433,6 @@ public class WebViewEx extends WebView {
     }
     
     public int progress() {
-        return mProgress < 0 ? -mProgress : mProgress;
+        return mProgress;
     }
 }
