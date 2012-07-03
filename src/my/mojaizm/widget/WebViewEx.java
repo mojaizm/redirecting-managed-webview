@@ -9,6 +9,7 @@ import android.net.http.SslError;
 import android.os.Build;
 import android.os.Message;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -30,11 +31,14 @@ public class WebViewEx extends WebView {
     
     public interface Client {
         public boolean shouldOverrideUrlLoading(WebView webview, String url);
+        public boolean onRedirectUrlLoading(WebView webview, String url);
         public void onPageStarted(WebView webview, String url, Bitmap favicon);
         public void onPageFinished(WebView webview, String url);
         public void onPageHalfFinished(WebView webview);
-        public void onNewPicture(WebView webview, Picture picture);
         public void onReceivedError(WebView webview, int errorCode, String errormsg, String failingUrl);
+        
+        public void onNewPicture(WebView webview, Picture picture);
+        public boolean onJsAlert(WebView webview, String url, String message, android.webkit.JsResult result);
     }
     
     private int mProgress;
@@ -52,8 +56,14 @@ public class WebViewEx extends WebView {
         mWebViewClient = new WebViewClient();
         mWebChromeClient = new WebChromeClient();
         mWebViewExClient = new WebViewEx.Client() {
+            
             @Override
             public boolean shouldOverrideUrlLoading(WebView webview, String url) {
+                return false;
+            }
+            
+            @Override
+            public boolean onRedirectUrlLoading(WebView webview, String url) {
                 return false;
             }
             
@@ -71,20 +81,21 @@ public class WebViewEx extends WebView {
 
             @Override
             public void onReceivedError(WebView webview, int errorCode, String errormsg, String failingUrl) {}
+
+            @Override
+            public boolean onJsAlert(WebView webview, String url, String message, JsResult result) {
+                return false;
+            }
         };
         //<---------------------------------------------
         super.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView webview, String url) {
-                mProgress = 0;
-                mIsHalfFinished = false;
-                
-                if (mProgress >= 0 && url.startsWith("http")) {
-                    // リダイレクト想定。WebViewに処理をまかせる。
-                    return false;
-                }
                 if (mWebViewClient.shouldOverrideUrlLoading(webview, url)) {
                     return true;
+                }
+                if (mProgress > 0 && !mIsHalfFinished && url.startsWith("http")) {
+                    return mWebViewExClient.onRedirectUrlLoading(webview, url);
                 }
                 return mWebViewExClient.shouldOverrideUrlLoading(webview, url);
             }
@@ -159,7 +170,7 @@ public class WebViewEx extends WebView {
                 mProgress = progress;
                 mWebChromeClient.onProgressChanged(webview, progress);
                 
-                if (mProgress >= 50 && !mIsHalfFinished) {
+                if (mProgress >= 40 && !mIsHalfFinished) {
                     mIsHalfFinished = true;
                     mWebViewExClient.onPageHalfFinished(webview);
                 }
@@ -167,7 +178,10 @@ public class WebViewEx extends WebView {
 
             @Override
             public boolean onJsAlert(WebView webview, String url, String message, android.webkit.JsResult result) {
-                return mWebChromeClient.onJsAlert(webview, url, message, result);
+                if (mWebChromeClient.onJsAlert(webview, url, message, result)) {
+                    return true;
+                }
+                return mWebViewExClient.onJsAlert(webview, url, message, result);
             }
             
             @Override
@@ -302,11 +316,11 @@ public class WebViewEx extends WebView {
         ws.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
         ws.setLoadWithOverviewMode(true);
         ws.setJavaScriptEnabled(true);
+        ws.setDomStorageEnabled(true);
         ws.setPluginsEnabled(false);
         ws.setDefaultTextEncodingName("UTF-8");
         ws.setLightTouchEnabled(true);
         ws.setRenderPriority(RenderPriority.HIGH);
-        ws.setDomStorageEnabled(true);
         if (!Build.VERSION.RELEASE.startsWith("2.1")) {
             // 2.1でこれをセットするとタッチイベントが発生しない不具合
             ws.setUseWideViewPort(true);

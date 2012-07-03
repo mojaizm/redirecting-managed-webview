@@ -7,6 +7,7 @@ import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.Picture;
 import android.os.Bundle;
+import android.webkit.JsResult;
 import android.webkit.WebView;
 
 public class SampleActivity extends Activity {
@@ -28,6 +29,11 @@ public class SampleActivity extends Activity {
             @Override
             public boolean shouldOverrideUrlLoading(WebView webview, String url) {
                 webview.setClickable(false);
+                return false;
+            }
+            
+            @Override
+            public boolean onRedirectUrlLoading(WebView webview, String url) {
                 return false;
             }
 
@@ -57,6 +63,11 @@ public class SampleActivity extends Activity {
             public void onReceivedError(WebView webview, int errorCode, String errormsg, String failingUrl) {
                 webview.setClickable(true);
                 hideLoadingProg();
+            }
+
+            @Override
+            public boolean onJsAlert(WebView webview, String url, String message, JsResult result) {
+                return false;
             }
         });
         
