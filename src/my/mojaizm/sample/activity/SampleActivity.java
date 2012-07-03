@@ -1,13 +1,12 @@
 package my.mojaizm.sample.activity;
 
-import my.minai.sample.R;
-import my.minai.widget.WebViewEx;
+import my.mojaizm.sample.R;
+import my.mojaizm.widget.WebViewEx;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.Picture;
 import android.os.Bundle;
-import android.util.Log;
 import android.webkit.WebView;
 
 public class SampleActivity extends Activity {
