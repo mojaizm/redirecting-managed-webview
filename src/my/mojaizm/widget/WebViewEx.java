@@ -390,15 +390,19 @@ public class WebViewEx extends WebView {
     
     @Override
     public void loadUrl(String ustr) {
-        mProgress = 0;
-        mIsHalfFinished = false;
+        if (ustr.indexOf("javascript:") < 0) {
+            mProgress = 0;
+            mIsHalfFinished = false;
+        }
         super.loadUrl(ustr);
     }
     
     @Override
     public void loadUrl(String ustr, Map<String, String>headers) {
-        mProgress = 0;
-        mIsHalfFinished = false;
+        if (ustr.indexOf("javascript:") < 0) {
+            mProgress = 0;
+            mIsHalfFinished = false;
+        }
         super.loadUrl(ustr, headers);
     }
     
