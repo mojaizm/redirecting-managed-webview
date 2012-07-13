@@ -346,6 +346,21 @@ public class WebViewEx extends WebView {
         init(context);
     }
     
+    public void resume() {
+        try {
+            WebView.class.getMethod("onResume").invoke(this);
+        } catch (Exception e) {
+        }
+    }
+
+    
+    public void pause() {
+        try {
+            WebView.class.getMethod("onPause").invoke(this);
+        } catch (Exception e) {
+        }
+    }
+   
     @Override
     public void scrollTo(int x, int y) {
         // scroll幅が実際のページよりはみ出した時、画面が真っ白になるので調整する
