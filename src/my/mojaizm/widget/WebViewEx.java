@@ -43,6 +43,7 @@ public class WebViewEx extends WebView {
     
     private int mProgress;
     private boolean mIsHalfFinished;
+    private boolean mIsStoppedLoading;
     private WebViewClient mWebViewClient;
     private WebChromeClient mWebChromeClient;
     private WebViewEx.Client mWebViewExClient;
@@ -50,6 +51,7 @@ public class WebViewEx extends WebView {
     private void init(Context context) {
         mProgress = 0;
         mIsHalfFinished = false;
+        mIsStoppedLoading = false;
         
         //--------------------------------------------->
         // dummy
@@ -346,13 +348,14 @@ public class WebViewEx extends WebView {
         init(context);
     }
     
+    
     public void resume() {
         try {
             WebView.class.getMethod("onResume").invoke(this);
         } catch (Exception e) {
         }
     }
-
+    
     
     public void pause() {
         try {
@@ -360,7 +363,8 @@ public class WebViewEx extends WebView {
         } catch (Exception e) {
         }
     }
-   
+    
+    
     @Override
     public void scrollTo(int x, int y) {
         // scroll幅が実際のページよりはみ出した時、画面が真っ白になるので調整する
@@ -408,23 +412,27 @@ public class WebViewEx extends WebView {
         if (ustr.indexOf("javascript:") < 0) {
             mProgress = 0;
             mIsHalfFinished = false;
+            mIsStoppedLoading = false;
         }
         super.loadUrl(ustr);
     }
-    
+   
     @Override
     public void loadUrl(String ustr, Map<String, String>headers) {
         if (ustr.indexOf("javascript:") < 0) {
             mProgress = 0;
             mIsHalfFinished = false;
+            mIsStoppedLoading = false;
         }
         super.loadUrl(ustr, headers);
     }
+
     
     @Override
     public void loadData(String data, String mimeType, String encoding) {
         mProgress = 0;
         mIsHalfFinished = false;
+        mIsStoppedLoading = false;
         super.loadData(data, mimeType, encoding);
     }
     
@@ -432,6 +440,7 @@ public class WebViewEx extends WebView {
     public void loadDataWithBaseURL(String baseUrl, String data, String mimeType, String encoding, String historyUrl) {
         mProgress = 0;
         mIsHalfFinished = false;
+        mIsStoppedLoading = false;
         super.loadDataWithBaseURL(baseUrl, data, mimeType, encoding, historyUrl);
     }
     
@@ -439,6 +448,7 @@ public class WebViewEx extends WebView {
     public void goBack() {
         mProgress = 0;
         mIsHalfFinished = false;
+        mIsStoppedLoading = false;
         super.goBack();
     }
     
@@ -446,6 +456,7 @@ public class WebViewEx extends WebView {
     public void goForward() {
         mProgress = 0;
         mIsHalfFinished = false;
+        mIsStoppedLoading = false;
         super.goForward();
     }
     
@@ -462,7 +473,13 @@ public class WebViewEx extends WebView {
         } catch (Exception e) {
         }
         // <------------------------
+        mIsStoppedLoading = true;
         super.stopLoading();
+    }
+    
+    
+    public boolean isStoppedLoading() {
+        return mIsStoppedLoading;
     }
     
     public int progress() {

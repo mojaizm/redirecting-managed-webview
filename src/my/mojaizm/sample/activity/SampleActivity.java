@@ -1,6 +1,6 @@
 package my.mojaizm.sample.activity;
 
-import my.mojaizm.sample.R;
+import my.mojaizm.sample.redirect.R;
 import my.mojaizm.widget.WebViewEx;
 import android.app.Activity;
 import android.app.ProgressDialog;
